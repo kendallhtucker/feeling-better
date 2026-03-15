@@ -371,12 +371,18 @@ async function sendAcceptance(container) {
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-auth-token': authToken },
       body: JSON.stringify({ messages: conversationMessages })
     });
 
     const data = await res.json();
     typing.remove();
+
+    if (data.error) {
+      showBotText(messagesEl, 'Something went wrong. Try again?');
+      conversationMessages.pop();
+      return;
+    }
 
     conversationMessages.push({
       role: 'assistant',
