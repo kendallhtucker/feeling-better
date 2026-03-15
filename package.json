@@ -1,0 +1,13 @@
+{
+  "name": "feeling-better",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A CBT companion app based on Feeling Good by David Burns",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "express": "^4.21.0"
+  }
+}

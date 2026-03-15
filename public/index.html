@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feeling Better</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a1a1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+
+  <!-- Passphrase gate (only shows if server has APP_PASSPHRASE set) -->
+  <div id="auth-gate" class="auth-gate" style="display:none;">
+    <div class="auth-card">
+      <p class="auth-label">Enter passphrase</p>
+      <input type="password" id="auth-input" class="auth-input" placeholder="passphrase" autocomplete="off">
+      <button id="auth-btn" class="primary-btn">Enter</button>
+      <p id="auth-error" class="auth-error" style="display:none;">Nope. Try again.</p>
+    </div>
+  </div>
+
+  <div class="app" id="main-app">
+    <!-- Header -->
+    <header>
+      <p class="subtitle" id="tagline"></p>
+      <nav>
+        <button class="nav-btn active" data-tab="analyze">What's on your mind?</button>
+        <button class="nav-btn" data-tab="checkin">Weekly Check-in</button>
+        <button class="nav-btn" data-tab="progress">Progress</button>
+      </nav>
+    </header>
+
+    <!-- Tab: Chat -->
+    <section id="tab-analyze" class="tab active">
+      <!-- Initial input (before conversation starts) -->
+      <div id="initial-input" class="initial-input-card">
+        <label for="initial-thought">What's bothering you? Type it out and let's look at it together.</label>
+        <textarea
+          id="initial-thought"
+          placeholder="e.g. I bombed that presentation. I'm terrible at my job and everyone knows it."
+          rows="4"
+        ></textarea>
+        <button id="initial-send-btn" class="primary-btn">Help me see clearly</button>
+      </div>
+
+      <!-- Chat (hidden until first message sent) -->
+      <div id="chat-container" class="chat-container" style="display:none;">
+        <div id="chat-messages" class="chat-messages"></div>
+
+        <div class="chat-input-area">
+          <textarea
+            id="chat-input"
+            placeholder="What's off? Tell me more..."
+            rows="3"
+          ></textarea>
+          <button id="send-btn" class="send-btn">Send</button>
+        </div>
+
+        <button id="new-chat-btn" class="secondary-btn" style="display:none;">Start a new conversation</button>
+      </div>
+
+      <!-- Past conversations now shown in collage background -->
+    </section>
+
+    <!-- Tab: Weekly Check-in (Burns Checklist) -->
+    <section id="tab-checkin" class="tab">
+      <div class="checkin-card">
+        <h2>Weekly Check-in</h2>
+        <p class="checkin-intro">Rate each item based on how you've felt over the past week. Be honest — this is just for you.</p>
+
+        <div id="checklist-questions"></div>
+
+        <button id="submit-checkin" class="primary-btn">See my score</button>
+      </div>
+
+      <div id="checkin-result" class="checkin-result" style="display:none;">
+        <div class="score-display">
+          <div class="score-number" id="score-number"></div>
+          <div class="score-label" id="score-label"></div>
+        </div>
+        <p id="score-description" class="score-description"></p>
+        <div id="safety-notice" class="safety-notice" style="display:none;">
+          <p><strong>Hey — I noticed some of your answers.</strong></p>
+          <p>If you're having thoughts of hurting yourself, please reach out. You don't have to do this alone.</p>
+          <p><strong>988 Suicide & Crisis Lifeline:</strong> Call or text <strong>988</strong></p>
+          <p><strong>Crisis Text Line:</strong> Text <strong>HOME</strong> to <strong>741741</strong></p>
+        </div>
+        <button id="save-checkin" class="primary-btn">Save this check-in</button>
+        <p id="save-confirmation" class="save-confirmation" style="display:none;">Saved! Check the Progress tab to see your trend.</p>
+      </div>
+    </section>
+
+    <!-- Tab: Progress -->
+    <section id="tab-progress" class="tab">
+      <div class="progress-card">
+        <h2>Your Progress</h2>
+        <p class="progress-intro">Track how you're doing over time. The number doesn't define you — the trend matters.</p>
+
+        <div class="chart-container">
+          <canvas id="progress-chart"></canvas>
+        </div>
+
+        <div id="no-data-msg" class="no-data" style="display:none;">
+          <p>No check-ins yet. Take your first weekly check-in to start tracking.</p>
+        </div>
+
+        <div id="progress-history" class="progress-history"></div>
+
+        <button id="clear-data" class="danger-btn" style="display:none;">Clear all data</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>Based on <em>Feeling Good</em> by David D. Burns, MD. This is not therapy — it's a thinking tool.</p>
+    </footer>
+  </div>
+
+  <!-- Collage: fixed overlay on desktop, flows below content on mobile -->
+  <div id="collage-layer" class="collage-layer"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
